@@ -15,11 +15,14 @@ protected:
     void paintEvent(QPaintEvent *event);
     void keyPressEvent(QKeyEvent *event);
 
-protected:
-    Point* point; // Указатель на Point для полиморфизма
+private:
+    Point* point; // for polymorphism
+    Lamp* lamp;
+    Star* redStar;
+    Star* blueStar;
+    Star* greenStar;
+    Star* yellowStar;
     const int step = 10;
-    Lamp *lamp;
-
 };
 
 #endif // MAINWINDOW_H
