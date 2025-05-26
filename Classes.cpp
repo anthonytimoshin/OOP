@@ -3,7 +3,9 @@
 Point::Point(int x, int y, bool visible)
     : Location(x, y), isVisible(visible) {}
 
-void Point::moveTo(QPainter *painter, int newX, int newY) {
+void Point::moveTo(QPainter *painter,
+                   int newX, int newY)
+{
     Hide(painter);
     setX(newX);
     setY(newY);
@@ -33,185 +35,224 @@ bool Point::getVisibility() const {
 void Point::setVisibility(bool visible) {
     isVisible = visible;
 }
-
+/////////////////////////////////////////////////
+/// \brief Lamp::Lamp
+/// \param x
+/// \param y
+/// \param visible
+///
 Lamp::Lamp(int x, int y, bool visible)
-    : Point(x, y, visible) {}
+    : Point(x, y, visible)
+{
+    id = 0;
+}
 
 void Lamp::Show(QPainter* painter) {
     isVisible = true;
     if (painter) {
+        // Основание лампы
         painter->setBrush(Qt::darkGray);
-        painter->drawRect(x, y + 100, size, 15);
+        painter->drawRect(x, y + 100, 60, 15);
+
+        // Стойка лампы
         painter->setPen(QPen(Qt::gray, 8));
-        painter->drawLine(x + size / 2, y + 40, x + size / 2, y + 100);
+        painter->drawLine(x + 30, y + 40, x + 30, y + 100);
+
+        // Абажур
         QPolygon lampshade;
         lampshade << QPoint(x, y + 40)
-                  << QPoint(x + size, y + 40)
-                  << QPoint(x + size * 3 / 4, y)
-                  << QPoint(x + size / 4, y);
+                  << QPoint(x + 60, y + 40)
+                  << QPoint(x + 45, y)
+                  << QPoint(x + 15, y);
         painter->setPen(Qt::NoPen);
-        painter->setBrush(color);
+        painter->setBrush(Qt::yellow);
         painter->drawPolygon(lampshade);
+
+        // Лампочка
         painter->setBrush(Qt::white);
-        painter->drawEllipse(x + size / 2 - 5, y + 30, 10, 10);
+        painter->drawEllipse(x + 25, y + 30, 10, 10);
     }
 }
 
 void Lamp::Hide(QPainter* painter) {
     isVisible = false;
     if (painter) {
+        // Стираем область, где находится лампа
         painter->setBrush(Qt::white);
-        painter->drawRect(x, y, size, 115);
+        painter->drawRect(x, y, 60, 115);
     }
 }
-
-void Lamp::moveTo(QPainter *painter, int newX, int newY) {
-    Hide(painter);
-    setX(newX);
-    setY(newY);
-    Show(painter);
-}
-
-TableLamp::TableLamp(int x, int y, bool visible)
+///////////////////////////////////////
+/// \brief BrokenLamp::BrokenLamp
+/// \param x
+/// \param y
+/// \param visible
+///
+BrokenLamp::BrokenLamp(int x, int y, bool visible)
     : Lamp(x, y, visible) {
-    color = Qt::green;
-    size = 50;
+    int id = 2;
 }
 
-void TableLamp::Show(QPainter* painter) {
-    Lamp::Show(painter);
+void BrokenLamp::Show(QPainter* painter) {
+    isVisible = true;
+    if (painter) {
+        // Основание лампы
+        painter->setBrush(Qt::darkGray);
+        painter->drawRect(x, y + 100, 60, 15);
+
+        // Стойка лампы
+        painter->setPen(QPen(Qt::gray, 8));
+        painter->drawLine(x + 30, y + 40, x + 30, y + 100);
+
+        // Лампочка
+        painter->setBrush(Qt::white);
+        painter->drawEllipse(x + 25, y + 30, 10, 10);
+    }
 }
 
-void TableLamp::Hide(QPainter* painter) {
-    Lamp::Hide(painter);
+void BrokenLamp::Hide(QPainter* painter) {
+    isVisible = false;
+    if (painter) {
+        // Стираем область, где находится лампа
+        painter->setBrush(Qt::white);
+        painter->drawRect(x, y, 60, 115);
+    }
 }
-
-FloorLamp::FloorLamp(int x, int y, bool visible)
+///////////////////////////////////////
+/// \brief MagicLamp::MagicLamp
+/// \param x
+/// \param y
+/// \param visible
+///
+MagicLamp::MagicLamp(int x, int y, bool visible)
     : Lamp(x, y, visible) {
-    color = Qt::blue;
-    size = 80;
+    int id = 1;
 }
 
-void FloorLamp::Show(QPainter* painter) {
-    Lamp::Show(painter);
-}
-
-void FloorLamp::Hide(QPainter* painter) {
-    Lamp::Hide(painter);
-}
-
-WallLamp::WallLamp(int x, int y, bool visible)
-    : FloorLamp(x, y, visible) {
-    color = Qt::red;
-    size = 40;
-}
-
-void WallLamp::Show(QPainter* painter) {
-    FloorLamp::Show(painter);
-}
-
-void WallLamp::Hide(QPainter* painter) {
-    FloorLamp::Hide(painter);
-}
-
-CeilingLamp::CeilingLamp(int x, int y, bool visible)
-    : WallLamp(x, y, visible) {
-    color = Qt::cyan;
-    size = 70;
-}
-
-void CeilingLamp::Show(QPainter* painter) {
-    WallLamp::Show(painter);
-}
-
-void CeilingLamp::Hide(QPainter* painter) {
-    WallLamp::Hide(painter);
-}
-
-RedStar::RedStar(int x, int y) : x(x), y(y) {}
-
-void RedStar::interactWithLamp(Lamp* lamp) {
-    lamp->setColor(Qt::darkRed);
-    if (dynamic_cast<TableLamp*>(lamp)) {
-        lamp->setSize(55);
-    } else if (dynamic_cast<FloorLamp*>(lamp)) {
-        lamp->setSize(85);
-    } else if (dynamic_cast<WallLamp*>(lamp)) {
-        lamp->setSize(45);
-    } else if (dynamic_cast<CeilingLamp*>(lamp)) {
-        lamp->setSize(75);
-    }
-}
-
-void RedStar::draw(QPainter* painter) {
+void MagicLamp::Show(QPainter* painter)
+{
+    isVisible = true;
     if (painter) {
-        painter->setBrush(Qt::red);
-        painter->drawEllipse(x, y, 30, 30);
+        // Основание лампы
+        painter->setBrush(Qt::darkGray);
+        painter->drawRect(x, y + 100, 60, 15);
+
+        // Стойка лампы
+        painter->setPen(QPen(Qt::gray, 8));
+        painter->drawLine(x + 30, y + 40, x + 30, y + 100);
+
+        // Лампочка
+        painter->setBrush(Qt::white);
+        painter->drawEllipse(x + 25, y + 30, 10, 10);
+
+        // Абажур
+        QPolygon lampshade;
+        lampshade << QPoint(x, y + 40)
+                  << QPoint(x + 60, y + 40)
+                  << QPoint(x + 45, y)
+                  << QPoint(x + 15, y);
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(Qt::yellow);
+        painter->drawPolygon(lampshade);
+
+        // Абажур 2
+        lampshade << QPoint(x, y + 80)
+                  << QPoint(x + 60, y + 80)
+                  << QPoint(x + 45, y + 40)
+                  << QPoint(x + 15, y + 40);
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(Qt::yellow);
+        painter->drawPolygon(lampshade);
     }
 }
 
-BlueStar::BlueStar(int x, int y) : x(x), y(y) {}
-
-void BlueStar::interactWithLamp(Lamp* lamp) {
-    lamp->setColor(Qt::darkBlue);
-    if (dynamic_cast<TableLamp*>(lamp)) {
-        lamp->setSize(60);
-    } else if (dynamic_cast<FloorLamp*>(lamp)) {
-        lamp->setSize(90);
-    } else if (dynamic_cast<WallLamp*>(lamp)) {
-        lamp->setSize(50);
-    } else if (dynamic_cast<CeilingLamp*>(lamp)) {
-        lamp->setSize(80);
-    }
-}
-
-void BlueStar::draw(QPainter* painter) {
+void MagicLamp::Hide(QPainter* painter) {
+    isVisible = false;
     if (painter) {
-        painter->setBrush(Qt::blue);
-        painter->drawEllipse(x, y, 30, 30);
+        // Стираем область, где находится лампа
+        painter->setBrush(Qt::white);
+        painter->drawRect(x, y, 60, 155);
     }
 }
 
-GreenStar::GreenStar(int x, int y) : x(x), y(y) {}
 
-void GreenStar::interactWithLamp(Lamp* lamp) {
-    lamp->setColor(Qt::darkGreen);
-    if (dynamic_cast<TableLamp*>(lamp)) {
-        lamp->setSize(50);
-    } else if (dynamic_cast<FloorLamp*>(lamp)) {
-        lamp->setSize(80);
-    } else if (dynamic_cast<WallLamp*>(lamp)) {
-        lamp->setSize(40);
-    } else if (dynamic_cast<CeilingLamp*>(lamp)) {
-        lamp->setSize(70);
-    }
-}
 
-void GreenStar::draw(QPainter* painter) {
+///////////////////////////////////////
+/// \brief Fig::Fig
+/// \param x
+/// \param y
+/// \param visible
+///
+Fig::Fig(int x, int y, bool visible)
+    : Point(x, y, visible) {};
+
+void Fig::Show(QPainter* painter) {
+    isVisible = true;
     if (painter) {
-        painter->setBrush(Qt::green);
-        painter->drawEllipse(x, y, 30, 30);
+        painter->setBrush(Qt::darkGray);
+        painter->drawEllipse(x, y, 100, 100);
     }
 }
 
-YellowStar::YellowStar(int x, int y) : x(x), y(y) {}
-
-void YellowStar::interactWithLamp(Lamp* lamp) {
-    lamp->setColor(Qt::darkYellow);
-    if (dynamic_cast<TableLamp*>(lamp)) {
-        lamp->setSize(65);
-    } else if (dynamic_cast<FloorLamp*>(lamp)) {
-        lamp->setSize(95);
-    } else if (dynamic_cast<WallLamp*>(lamp)) {
-        lamp->setSize(55);
-    } else if (dynamic_cast<CeilingLamp*>(lamp)) {
-        lamp->setSize(85);
+void Fig::Hide(QPainter* painter) {
+    isVisible = false;
+    if (painter) {
+        // Стираем область, где находится лампа
+        painter->setBrush(Qt::white);
+        painter->drawEllipse(x, y, 100, 100);
     }
 }
+/////////////////////////////////////
+/// \brief Energy::Energy
+/// \param x
+/// \param y
+/// \param visible
+///
+Energy::Energy(int x, int y, bool visible)
+    : Fig(x, y, visible) {
+    int id = 0;
+};
 
-void YellowStar::draw(QPainter* painter) {
+void Energy::Show(QPainter* painter) {
+    isVisible = true;
     if (painter) {
         painter->setBrush(Qt::yellow);
-        painter->drawEllipse(x, y, 30, 30);
+        painter->drawEllipse(x, y, 100, 100);
+        painter->setBrush(Qt::red);
+        painter->drawEllipse(x+25, y+25, 50, 50);
     }
 }
+
+void Energy::Hide(QPainter* painter) {
+    isVisible = false;
+    if (painter) {
+        painter->setBrush(Qt::white);
+        painter->drawEllipse(x, y, 200, 200);
+    }
+}
+/////////////////////////////////////////
+/// \brief Brick::Brick
+/// \param x
+/// \param y
+/// \param visible
+///
+Brick::Brick(int x, int y, bool visible)
+    : Fig(x, y, visible) {
+    int id = 1;
+};
+
+void Brick::Show(QPainter* painter) {
+    isVisible = true;
+    if (painter) {
+        painter->setBrush(Qt::black);
+        painter->drawRect(x, y, 100, 50);
+    }
+};
+
+void Brick::Hide(QPainter* painter) {
+    isVisible = false;
+    if (painter) {
+        painter->setBrush(Qt::white);
+        painter->drawRect(x, y, 100, 50);
+    }
+};

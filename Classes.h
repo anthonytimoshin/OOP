@@ -22,110 +22,70 @@ protected:
     bool isVisible;
 public:
     Point(int x = 0, int y = 0, bool visible = true);
-    virtual ~Point() = default;
-    virtual void moveTo(QPainter* painter, int newX, int newY);
+    virtual ~Point() = default; // Виртуальный деструктор
+    void moveTo(QPainter* painter,
+                int newX, int newY);
     virtual void Hide(QPainter* painter);
     virtual void Show(QPainter* painter);
     bool getVisibility() const;
     void setVisibility(bool visible);
 };
 
+//////////////////////////////////////
+/// \brief The Lamp class
+///
 class Lamp : public Point {
-protected:
-    Qt::GlobalColor color = Qt::yellow; // Default color
-    int size = 60; // Default size (width of lamp base)
 public:
+    int id;
     Lamp(int x = 0, int y = 0, bool visible = true);
-    virtual void moveTo(QPainter* painter, int newX, int newY);
-    virtual void Show(QPainter* painter);
-    virtual void Hide(QPainter* painter);
-    Qt::GlobalColor getColor() const { return color; }
-    void setColor(Qt::GlobalColor c) { color = c; }
-    int getSize() const { return size; }
-    void setSize(int s) { size = s; }
-};
-
-class TableLamp : public Lamp {
-public:
-    TableLamp(int x = 0, int y = 0, bool visible = true);
     virtual void Show(QPainter* painter);
     virtual void Hide(QPainter* painter);
 };
 
-class FloorLamp : public Lamp {
+class BrokenLamp: public Lamp {
 public:
-    FloorLamp(int x = 0, int y = 0, bool visible = true);
+    int id;
+    BrokenLamp(int x = 0, int y = 0, bool visible = true);
     virtual void Show(QPainter* painter);
     virtual void Hide(QPainter* painter);
 };
 
-class WallLamp : public FloorLamp {
+class MagicLamp:public Lamp
+{
 public:
-    WallLamp(int x = 0, int y = 0, bool visible = true);
-    virtual void Show(QPainter* painter);
-    virtual void Hide(QPainter* painter) ;
-};
-
-class CeilingLamp : public WallLamp {
-public:
-    CeilingLamp(int x = 0, int y = 0, bool visible = true);
+    int id;
+    MagicLamp(int x = 0, int y = 0, bool visible = true);
     virtual void Show(QPainter* painter);
     virtual void Hide(QPainter* painter);
+
 };
 
-class Lamp; // Forward declaration
-
-class Star {
+///////////////////////////////////////
+/// \brief The Fig class
+///
+class Fig : public Point {
 public:
-    virtual ~Star() = default;
-    virtual void interactWithLamp(Lamp* lamp) = 0;
-    virtual void draw(QPainter* painter) = 0;
-    virtual int getX() const = 0;
-    virtual int getY() const = 0;
+    Fig(int x = 0, int y = 0, bool visible = true);
+    virtual void Show(QPainter* painter);
+    virtual void Hide(QPainter* painter);
+    int id;
 };
 
-class RedStar : public Star {
-private:
-    int x, y;
+class Energy : public Fig {
 public:
-    RedStar(int x = 300, int y = 200);
-    void interactWithLamp(Lamp* lamp) override;
-    void draw(QPainter* painter) override;
-    int getX() const override { return x; }
-    int getY() const override { return y; }
+    Energy(int x = 0, int y = 0, bool visible = true);
+    virtual void Show(QPainter* painter);
+    virtual void Hide(QPainter* painter);
+    int id;
 };
 
-class BlueStar : public Star {
-private:
-    int x, y;
+class Brick : public Fig {
 public:
-    BlueStar(int x = 500, int y = 200);
-    void interactWithLamp(Lamp* lamp) override;
-    void draw(QPainter* painter) override;
-    int getX() const override { return x; }
-    int getY() const override { return y; }
+    Brick(int x = 0, int y = 0, bool visible = true);
+    virtual void Show(QPainter* painter);
+    virtual void Hide(QPainter* painter);
+    int id;
 };
 
-class GreenStar : public Star {
-private:
-    int x, y;
-public:
-    GreenStar(int x = 300, int y = 400);
-    void interactWithLamp(Lamp* lamp) override;
-    void draw(QPainter* painter) override;
-    int getX() const override { return x; }
-    int getY() const override { return y; }
-};
-
-class YellowStar : public Star {
-private:
-    int x, y;
-public:
-    YellowStar(int x = 500, int y = 400);
-    void interactWithLamp(Lamp* lamp) override;
-    void draw(QPainter* painter) override;
-    int getX() const override { return x; }
-    int getY() const override { return y; }
-};
 
 #endif // CLASSES_H

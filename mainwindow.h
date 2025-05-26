@@ -12,17 +12,28 @@ public:
     ~MainWindow();
 
 protected:
+    int CheckCollision(Lamp *l, Fig *f);
     void paintEvent(QPaintEvent *event);
     void keyPressEvent(QKeyEvent *event);
 
-private:
-    Point* point; // for polymorphism
-    Lamp* lamp;
-    Star* redStar;
-    Star* blueStar;
-    Star* greenStar;
-    Star* yellowStar;
+protected:
+    Point* point; // Указатель на Point для полиморфизма
     const int step = 10;
+
+    Lamp *lamp;
+    BrokenLamp *brokenLamp;
+    MagicLamp  *magicLamp;
+
+
+    Energy *energy;
+    Brick *brick;
+
+    Lamp *BufLamp[3]; // 2
+    Fig  *BufFig[2]; // 1
+
+    Lamp *curLamp;
+    Fig  *curFig;
+
 };
 
 #endif // MAINWINDOW_H
